@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Image Display</title>
+<style>
+  :root{
+    --bg:#0b0b10; --card:#141425; --text:#e8e8f2; --muted:#a7a7bf;
+    --ring:rgba(120,120,255,.35);
+    --grad:conic-gradient(from 0deg at 50% 50%, #ff5ef4, #ffd15e, #5effc8, #5ea9ff, #c05eff, #ff5ef4);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    color:var(--text);
+    background:
+      radial-gradient(1200px 800px at 70% -10%, rgba(255,255,255,.06), transparent 55%),
+      radial-gradient(900px 600px at -10% 60%, rgba(255,255,255,.05), transparent 60%),
+      var(--bg);
+  }
+  header{
+    position:sticky; top:0; z-index:10;
+    backdrop-filter:saturate(120%) blur(10px);
+    background:linear-gradient(180deg, rgba(13,13,22,.75), rgba(13,13,22,.45));
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .wrap{max-width:1120px; margin:0 auto; padding:18px}
+  .title{
+    font-size:clamp(22px,3vw,34px); font-weight:900; letter-spacing:.2px;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .controls{display:flex; gap:10px; align-items:center; padding:12px 18px; max-width:1120px; margin:0 auto; justify-content:flex-end}
+  button{
+    background:#21213a; color:var(--text); border:1px solid rgba(255,255,255,.08);
+    padding:10px 12px; border-radius:12px; font-weight:700; cursor:pointer;
+  }
+  button:hover{border-color:var(--ring)}
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:18px; padding:22px 18px 64px; max-width:1120px; margin:0 auto;
+  }
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+    border:1px solid rgba(255,255,255,.08); border-radius:16px; overflow:hidden;
+    box-shadow:0 10px 24px rgba(0,0,0,.35);
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover{ transform:translateY(-3px); border-color:var(--ring); box-shadow:0 16px 36px rgba(20,20,60,.55); }
+  .imgbox{ position:relative; aspect-ratio:4/3; background:#0e0e1a; overflow:hidden; }
+  .imgbox img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .prompt{ padding:12px 14px 14px; font-size:13px; line-height:1.45; color:var(--text);}
+  .prompt small{ display:block; color:var(--muted); margin-top:6px; font-size:11px; }
+  .footer{ text-align:center; color:var(--muted); font-size:12px; padding:18px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="title">AI Image Display</div>
+    </div>
+  </header>
+
+  <section class="controls">
+    <button id="shuffle">Shuffle</button>
+  </section>
+
+  <main class="grid" id="grid"></main>
+  <div class="footer">One file. No servers. 💫</div>
+
+<script>
+  const items = [
+    { src: "static/ChatGPT Image Aug 11, 2025, 06_10_42 AM.png", prompt: "A swirling vortex of neon lights, fractal patterns in cyan, magenta, and yellow, high detail, glowing edges, ultra-vibrant abstract art" },
+    { src: "static/ChatGPT Image Aug 11, 2025, 06_10_55 AM.png", prompt: "Cosmic liquid waves of rainbow paint colliding in mid-air, ultra-saturated, surreal abstract painting, dripping textures, shimmering light" },
+    { src: "static/ChatGPT Image Aug 11, 2025, 06_11_04 AM.png", prompt: "Kaleidoscopic glass shards reflecting every color of the spectrum, geometric symmetry, vivid gradients, ultra high resolution" },
+    { src: "static/ChatGPT Image Aug 11, 2025, 06_11_08 AM.png", prompt: "An explosion of ink in water, hyper-realistic, rich contrast between warm and cool tones, abstract macro photography style" },
+    { src: "static/ChatGPT Image Aug 11, 2025, 06_11_11 AM.png", prompt: "Digital aurora storm, infinite color ribbons twisting through black space, glowing particles, volumetric lighting, dreamlike" }
+  ];
+
+  const grid = document.getElementById('grid');
+
+  function render(){
+    grid.innerHTML = items.map(({src, prompt}) => `
+      <article class="card">
+        <div class="imgbox">
+          <img loading="lazy" src="${encodeURI(src)}" alt="${escapeHTML(prompt)}">
+        </div>
+        <div class="prompt">${escapeHTML(prompt)}<small>Prompt</small></div>
+      </article>
+    `).join('');
+  }
+  render();
+
+  document.getElementById('shuffle').addEventListener('click', () => {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    render();
+  });
+
+  function escapeHTML(s){
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+</script>
+</body>
+</html>
